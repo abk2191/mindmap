@@ -19,20 +19,21 @@ export default function Mindmap() {
   });
 
   const [inputMap, setInputMap] = useState({});
+  const [scale, setScale] = useState(1);
 
   const generateId = () => Math.random().toString(36).slice(2);
 
-  /* 🔹 Persist to localStorage */
+  /* Persist */
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(nodes));
   }, [nodes]);
 
-  /* Update node text */
+  /* Update text */
   const updateText = (id, text) => {
     setNodes((prev) => prev.map((n) => (n.id === id ? { ...n, text } : n)));
   };
 
-  /* Update node color */
+  /* Update color */
   const updateColor = (id, color) => {
     setNodes((prev) => prev.map((n) => (n.id === id ? { ...n, color } : n)));
   };
@@ -82,7 +83,6 @@ export default function Mindmap() {
 
         <div style={styles.controls}>
           <input
-            className="color-picker"
             type="color"
             value={node.color}
             onChange={(e) => updateColor(node.id, e.target.value)}
@@ -118,11 +118,26 @@ export default function Mindmap() {
 
   return (
     <div style={styles.container}>
-      <h2 style={{ color: "blue" }}>
-        {" "}
-        <i className="fa-solid fa-brain"></i> Mindmap
-      </h2>
-      {rootNode && renderNode(rootNode)}
+      <h2>Mindmap Engine</h2>
+
+      {/* 🔍 Zoom Controls */}
+      <div style={styles.zoomControls}>
+        <button onClick={() => setScale((s) => Math.max(0.4, s - 0.1))}>
+          −
+        </button>
+        <button onClick={() => setScale(1)}>Reset</button>
+        <button onClick={() => setScale((s) => Math.min(2, s + 0.1))}>+</button>
+      </div>
+
+      {/* 🧠 Scaled Mindmap */}
+      <div
+        style={{
+          transform: `scale(${scale})`,
+          transformOrigin: "0 0",
+        }}
+      >
+        {rootNode && renderNode(rootNode)}
+      </div>
     </div>
   );
 }
@@ -132,10 +147,12 @@ const styles = {
   container: {
     padding: "20px",
     fontFamily: "sans-serif",
+    overflowX: "auto",
+  },
+  zoomControls: {
     display: "flex",
-    alignItems: "center",
-    flexDirection: "column",
-    justifyContent: "center",
+    gap: "8px",
+    marginBottom: "12px",
   },
   node: {
     display: "inline-block",
