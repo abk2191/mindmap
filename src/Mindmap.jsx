@@ -83,6 +83,7 @@ export default function Mindmap() {
 
         <div style={styles.controls}>
           <input
+            className="color-picker"
             type="color"
             value={node.color}
             onChange={(e) => updateColor(node.id, e.target.value)}
@@ -148,6 +149,10 @@ const styles = {
     padding: "20px",
     fontFamily: "sans-serif",
     overflowX: "auto",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
   },
   zoomControls: {
     display: "flex",
